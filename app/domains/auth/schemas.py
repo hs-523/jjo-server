@@ -1,1 +1,16 @@
-# auth 도메인 (schemas) - BE1 담당: 로그인/회원가입, 약관 동의, 사용자 설정
+from pydantic import BaseModel, ConfigDict, StrictBool, Field
+
+class Input(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+class GoogleRequest(Input):
+    id_token: str = Field(min_length=1)
+
+class Agreements(Input):
+    service_terms: StrictBool
+    privacy_collection_use: StrictBool
+    marketing: StrictBool = False
+
+class SignupRequest(Input):
+    signup_token: str = Field(min_length=1)
+    agreements: Agreements
