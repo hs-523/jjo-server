@@ -70,13 +70,19 @@ def test_client_cannot_select_owner(api):
 @pytest.mark.parametrize('body', [{}, {'script': ''}, {'script': ' \t\r\n'},
                                   {'script': '가' * 1501}, {'script': None},
                                   {'script': 123}, {'script': ['대본']}])
-def test_invalid_script_does_not_write(api, body):
+def test_invalid_script_does_not_write(api, body, monkeypatch):
+    from unittest.mock import Mock
+    from app.domains.practice import title
+    monkeypatch.setattr(title.settings, "gemini_api_key", "test-key")
+    call = Mock()
+    monkeypatch.setattr(title.genai, "Client", call)
     c, engine, headers, _ = api
     response = c.post('/practices', headers=headers, json=body)
     assert response.status_code == 422
     assert response.json()['error']['code'] == 'VALIDATION_ERROR'
     assert response.json()['error']['fields'] == ['script']
     assert count(engine) == 0
+    call.assert_not_called()
 
 
 def test_reject_credentials(api):
@@ -131,3 +137,24 @@ def test_rollback_on_save_failure(api, monkeypatch, stage):
     monkeypatch.setattr(routes, 'create_practice', original)
     assert c.post('/practices', headers=headers, json={'script': '재시도'}).status_code == 201
     assert count(engine) == 1
+
+
+def test_gemini_title_in_response_and_database(api, monkeypatch):
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+    from app.domains.practice import title
+
+    monkeypatch.setattr(title.settings, "gemini_api_key", "test-key")
+    client = MagicMock()
+    client.__enter__.return_value = client
+    client.models.generate_content.return_value = SimpleNamespace(text='  “AI 발표 코칭”\n')
+    monkeypatch.setattr(title.genai, "Client", MagicMock(return_value=client))
+    c, engine, headers, uid = api
+    response = c.post('/practices', headers=headers, json={'script': '발표 연습을 AI로 도와줍니다.'})
+    assert response.status_code == 201
+    assert response.json()['title'] == 'AI 발표 코칭'
+    with Session(engine) as db:
+        saved = db.get(Practice, response.json()['id'])
+        assert saved.title == 'AI 발표 코칭'
+        assert saved.user_id == uid
+    client.models.generate_content.assert_called_once()
