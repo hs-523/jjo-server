@@ -1,0 +1,7 @@
+my_test_voice/
+.venv/
+__pycache__/
+.pytest_cache/
+*.m4a
+*.wav
+*.mp3

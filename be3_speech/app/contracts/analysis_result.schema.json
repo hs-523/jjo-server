@@ -1,0 +1,570 @@
+{
+  "$defs": {
+    "Disfluency": {
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/DisfluencyType"
+        },
+        "beforeIdx": {
+          "title": "Beforeidx",
+          "type": "integer"
+        },
+        "startMs": {
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "title": "Endms",
+          "type": "integer"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        }
+      },
+      "required": [
+        "type",
+        "beforeIdx",
+        "startMs",
+        "endMs"
+      ],
+      "title": "Disfluency",
+      "type": "object"
+    },
+    "DisfluencyType": {
+      "enum": [
+        "FILLER",
+        "REPEAT",
+        "INSERTION",
+        "STRAY_SOUND"
+      ],
+      "title": "DisfluencyType",
+      "type": "string"
+    },
+    "Habit": {
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/HabitType"
+        },
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "occurrences": {
+          "items": {
+            "$ref": "#/$defs/IdxRange"
+          },
+          "title": "Occurrences",
+          "type": "array"
+        },
+        "firstIdx": {
+          "title": "Firstidx",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "count",
+        "occurrences",
+        "firstIdx"
+      ],
+      "title": "Habit",
+      "type": "object"
+    },
+    "HabitType": {
+      "enum": [
+        "END_RISE",
+        "END_STRETCH",
+        "END_FADE",
+        "MID_STRETCH",
+        "MID_PAUSE",
+        "LONG_PAUSE",
+        "NO_BREAK"
+      ],
+      "title": "HabitType",
+      "type": "string"
+    },
+    "IdxRange": {
+      "properties": {
+        "startIdx": {
+          "title": "Startidx",
+          "type": "integer"
+        },
+        "endIdx": {
+          "title": "Endidx",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "startIdx",
+        "endIdx"
+      ],
+      "title": "IdxRange",
+      "type": "object"
+    },
+    "Pause": {
+      "properties": {
+        "afterIdx": {
+          "title": "Afteridx",
+          "type": "integer"
+        },
+        "durationMs": {
+          "title": "Durationms",
+          "type": "integer"
+        },
+        "boundary": {
+          "$ref": "#/$defs/PauseBoundary"
+        },
+        "expected": {
+          "default": false,
+          "title": "Expected",
+          "type": "boolean"
+        },
+        "relativeLength": {
+          "default": 1.0,
+          "title": "Relativelength",
+          "type": "number"
+        },
+        "isHabit": {
+          "default": false,
+          "title": "Ishabit",
+          "type": "boolean"
+        },
+        "habitType": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HabitType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "afterIdx",
+        "durationMs",
+        "boundary"
+      ],
+      "title": "Pause",
+      "type": "object"
+    },
+    "PauseBoundary": {
+      "enum": [
+        "WORD_INTERNAL",
+        "WORD",
+        "COMMA",
+        "LINE",
+        "SENTENCE"
+      ],
+      "title": "PauseBoundary",
+      "type": "string"
+    },
+    "Phrase": {
+      "properties": {
+        "startIdx": {
+          "title": "Startidx",
+          "type": "integer"
+        },
+        "endIdx": {
+          "title": "Endidx",
+          "type": "integer"
+        },
+        "speedSyllPerSec": {
+          "title": "Speedsyllpersec",
+          "type": "number"
+        },
+        "speedRatio": {
+          "title": "Speedratio",
+          "type": "number"
+        },
+        "speedLabel": {
+          "$ref": "#/$defs/SpeedLabel"
+        }
+      },
+      "required": [
+        "startIdx",
+        "endIdx",
+        "speedSyllPerSec",
+        "speedRatio",
+        "speedLabel"
+      ],
+      "title": "Phrase",
+      "type": "object"
+    },
+    "SpeedLabel": {
+      "enum": [
+        "FAST",
+        "NORMAL",
+        "SLOW"
+      ],
+      "title": "SpeedLabel",
+      "type": "string"
+    },
+    "SpokenDifference": {
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/SpokenKind"
+        },
+        "startIdx": {
+          "title": "Startidx",
+          "type": "integer"
+        },
+        "endIdx": {
+          "title": "Endidx",
+          "type": "integer"
+        },
+        "spoken": {
+          "title": "Spoken",
+          "type": "string"
+        },
+        "scriptText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scripttext"
+        }
+      },
+      "required": [
+        "kind",
+        "startIdx",
+        "endIdx",
+        "spoken"
+      ],
+      "title": "SpokenDifference",
+      "type": "object"
+    },
+    "SpokenKind": {
+      "enum": [
+        "REPLACED",
+        "ADDED"
+      ],
+      "title": "SpokenKind",
+      "type": "string"
+    },
+    "Summary": {
+      "properties": {
+        "avgSyllablesPerSec": {
+          "title": "Avgsyllablespersec",
+          "type": "number"
+        },
+        "articulationSyllablesPerSec": {
+          "title": "Articulationsyllablespersec",
+          "type": "number"
+        },
+        "medianPitchHz": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Medianpitchhz"
+        },
+        "typicalPauseMs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Typicalpausems"
+        },
+        "alignedRatio": {
+          "title": "Alignedratio",
+          "type": "number"
+        },
+        "scriptMatchRatio": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scriptmatchratio"
+        }
+      },
+      "required": [
+        "avgSyllablesPerSec",
+        "articulationSyllablesPerSec",
+        "alignedRatio"
+      ],
+      "title": "Summary",
+      "type": "object"
+    },
+    "Syllable": {
+      "properties": {
+        "idx": {
+          "title": "Idx",
+          "type": "integer"
+        },
+        "char": {
+          "title": "Char",
+          "type": "string"
+        },
+        "startMs": {
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "title": "Endms",
+          "type": "integer"
+        },
+        "pitchHz": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pitchhz"
+        },
+        "pitchSt": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pitchst"
+        },
+        "pitchLevel": {
+          "default": 4,
+          "maximum": 7,
+          "minimum": 1,
+          "title": "Pitchlevel",
+          "type": "integer"
+        },
+        "volumeDb": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volumedb"
+        },
+        "lowVolume": {
+          "default": false,
+          "title": "Lowvolume",
+          "type": "boolean"
+        },
+        "stretch": {
+          "default": false,
+          "title": "Stretch",
+          "type": "boolean"
+        },
+        "stretchRatio": {
+          "default": 1.0,
+          "title": "Stretchratio",
+          "type": "number"
+        },
+        "aligned": {
+          "default": true,
+          "title": "Aligned",
+          "type": "boolean"
+        },
+        "inferred": {
+          "default": false,
+          "title": "Inferred",
+          "type": "boolean"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "isHabit": {
+          "default": false,
+          "title": "Ishabit",
+          "type": "boolean"
+        },
+        "habitTypes": {
+          "items": {
+            "$ref": "#/$defs/HabitType"
+          },
+          "title": "Habittypes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "idx",
+        "char",
+        "startMs",
+        "endMs"
+      ],
+      "title": "Syllable",
+      "type": "object"
+    },
+    "UnclearRange": {
+      "properties": {
+        "startIdx": {
+          "title": "Startidx",
+          "type": "integer"
+        },
+        "endIdx": {
+          "title": "Endidx",
+          "type": "integer"
+        },
+        "reason": {
+          "$ref": "#/$defs/UnclearReason"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "startIdx",
+        "endIdx",
+        "reason",
+        "confidence"
+      ],
+      "title": "UnclearRange",
+      "type": "object"
+    },
+    "UnclearReason": {
+      "enum": [
+        "LOW_VOLUME",
+        "LOW_RECOGNITION",
+        "SKIPPED"
+      ],
+      "title": "UnclearReason",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "version": {
+      "default": "1.1",
+      "title": "Version",
+      "type": "string"
+    },
+    "durationMs": {
+      "title": "Durationms",
+      "type": "integer"
+    },
+    "spokenText": {
+      "default": "",
+      "title": "Spokentext",
+      "type": "string"
+    },
+    "syllables": {
+      "items": {
+        "$ref": "#/$defs/Syllable"
+      },
+      "title": "Syllables",
+      "type": "array"
+    },
+    "pauses": {
+      "items": {
+        "$ref": "#/$defs/Pause"
+      },
+      "title": "Pauses",
+      "type": "array"
+    },
+    "phrases": {
+      "items": {
+        "$ref": "#/$defs/Phrase"
+      },
+      "title": "Phrases",
+      "type": "array"
+    },
+    "habits": {
+      "items": {
+        "$ref": "#/$defs/Habit"
+      },
+      "title": "Habits",
+      "type": "array"
+    },
+    "mismatchedRanges": {
+      "items": {
+        "$ref": "#/$defs/IdxRange"
+      },
+      "title": "Mismatchedranges",
+      "type": "array"
+    },
+    "unclearRanges": {
+      "items": {
+        "$ref": "#/$defs/UnclearRange"
+      },
+      "title": "Unclearranges",
+      "type": "array"
+    },
+    "disfluencies": {
+      "items": {
+        "$ref": "#/$defs/Disfluency"
+      },
+      "title": "Disfluencies",
+      "type": "array"
+    },
+    "spokenDifferences": {
+      "items": {
+        "$ref": "#/$defs/SpokenDifference"
+      },
+      "title": "Spokendifferences",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "summary": {
+      "$ref": "#/$defs/Summary"
+    }
+  },
+  "required": [
+    "durationMs",
+    "syllables",
+    "pauses",
+    "phrases",
+    "habits",
+    "summary"
+  ],
+  "title": "AnalysisResult",
+  "type": "object"
+}
