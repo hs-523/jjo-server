@@ -1,4 +1,27 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/practices", tags=["practice"])
-# practice 도메인 (router) - BE1 담당: 연습, 대본, 녹음 회차, 업로드, 제목 생성
+from app.core.database import get_db
+from app.domains.auth.models import User
+from app.domains.auth.router import AuthRoute, get_current_user
+from app.domains.practice.schemas import PracticeCreate, PracticeResponse
+from app.domains.practice.service import create_practice
+
+router = APIRouter(prefix="/practices", tags=["practice"], route_class=AuthRoute)
+
+
+@router.post("", status_code=201, response_model=PracticeResponse)
+def create(
+    body: PracticeCreate,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> PracticeResponse:
+    try:
+        practice = create_practice(db, user_id=user.id, data=body)
+        # Validate the response model before commit so validation failures also roll back.
+        result = PracticeResponse.model_validate(practice)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    return result
